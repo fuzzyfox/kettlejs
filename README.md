@@ -1,4 +1,3 @@
-popfrence
-=========
+# kettlejs
 
-Popcorn Maker Confernece thing...
+Popcorn Maker Dynamic Playlists [Popathon London]
