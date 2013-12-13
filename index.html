@@ -1,51 +1,161 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="asset/css/bootstrap.min.css">
+	<style>
+	body {
+		background: rgb(227, 234, 238) url('asset/img/bg.png') center center;
+	}
+	#thumbnails {
+		overflow-x: scroll;
+		white-space: nowrap;
+		box-shadow: inset 0px 0px 4px rgba(0, 0, 0, 0.3);
+		background: #fff;
+		margin-top: 1em;
+		/*display: none;*/
+	}
+	.make {
+		background: #fff;
+		background-size: cover;
+		background-position: center;
+		background-repeat: none;
+		border-radius: 0px;
+		box-shadow: 0px 6px 4px -4px rgba(0, 0, 0, 0.3);
+		overflow: hidden;
+		width: 240px;
+		height: 240px;
+		position: relative;
+		display: inline-block;
+		margin: 1em;
+		padding: 0;
+		cursor: pointer;
+	}
+	.make a {
+		text-decoration: none;
+		color: inherit;
+	}
+	.make .make-info {
+		position: relative;
+		line-height: 1.2;
+		background: none repeat scroll 0% 0% rgba(255, 255, 255, 0.96);
+		color: rgb(77, 78, 83);
+		padding: 1em;
+		opacity: 1;
+		transition: opacity 0.1s ease 0s;
+	}
+	.make .btn-container {
+		font-size: 16px;
+		position: absolute;
+		left: 1em;
+		bottom: 1em;
+		opacity: 0;
+		transition: opacity 0.1s ease 0s;
+	}
+	.make .btn-container:hover {
+		opacity: 1;
+		transition: opacity 0.1s ease 0s;
+	}
+	.make .btn {
+		border: 1px solid rgb(255, 255, 255);
+		background: none repeat scroll 0% 0% rgb(63, 181, 142);
+		width: auto;
+		height: auto;
+		font-size: 14px;
+		padding: 0.6em 0.9em 0.5em;
+		margin: 0 0.5em 0 0;
+		color: rgb(255, 255, 255) !important;
+		border-radius: 0;
+	}
+	.make .btn:hover {
+		background: none repeat scroll 0% 0% rgb(133, 213, 186);
+	}
+	.embed-container {
+		position: relative;
+		padding-bottom: 56.25%; /* 16/9 ratio */
+		padding-top: 30px; /* IE6 workaround*/
+		height: 0;
+		overflow: hidden;
+		box-shadow: 0px 0px 10px #444;
+	}
+	.embed-container iframe,
+	.embed-container object,
+	.embed-container embed {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background: white;
+	}
 
-    <title>Kettle</title>
+	.navbar {
+		opacity: 0;
+		transition: .3s;
+		transition-delay: .7s;
+	}
+	.navbar:hover,
+	.navbar:focus {
+		opacity: 1;
+	}
+	</style>
+	<title>kettle.js</title>
+</head>
+<body>
+	<nav class="navbar navbar-default navbar-static-top navbar-inverse" role="navigation">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" href="#"></a>
+		</div>
 
-    <!-- Bootstrap core CSS -->
-    <link href="assets/css/bootstrap.css" rel="stylesheet">
+		<div class="collapse navbar-collapse navbar-ex1-collapse">
+			<form class="navbar-form navbar-right" role="search">
+				<div class="form-group">
+					<input name="q" type="text" class="form-control" placeholder="Search"  id="search">
+				</div>
+				<button type="submit" class="btn btn-primary"><span class=".glyphicon .glyphicon-search"></span> Search</button>
+			</form>
+		</div>
+	</nav>
 
-    <!-- Custom styles for this template -->
-    <link href="assets/sticky-footer-navbar.css" rel="stylesheet">
-  </head>
+	<div class="container">
+		<div class="row embed-container">
+			<iframe src="about:blank" frameborder="0" width="640" height="403" id="player"></iframe>
+		</div>
+		<div class="row" id="thumbnails">
 
-  <body>
-
-    <!-- Wrap all page content here -->
-    <div id="wrap">
-
-      <!-- Fixed navbar -->
-<div class="navbar navbar-fixed-top"><img src="assets/logo.png?">
-  <a href="index.html"><font size="10">Kettle</font></a>
-</div>
+		</div>
+	</div>
 
 
-      <!-- Begin page content -->
-      <div class="container">
-        <div class="page-header">
-          <br><br><br><br>
-        </div>
-                <br>
-                <h2>Gather interactive videos from a global community of webmakers and remixers.</h2>
-                <br>
-                <br>
-        <strong>Search:</strong><form action="test.html" method="get">
-          <input type="text" name="q">
-        </form>
-      </div>
-    </div>
+	<!-- critical scripts -->
+	<script src="asset/js/make-api.js"></script>
+	<script src="asset/js/kettle.js"></script>
 
-    <div id="footer">
-      <div class="container">
-        <p class="text-muted credit"> <a href="about.html">About</a> & <a href="github">Github</a>.</p>
-      </div>
-    </div>
+	<script>
+		var kettle = new Kettle(),
+			player = document.querySelector('#player');
 
-  </body>
+		kettle.search('popcats', function(playQueue){
+			if(playQueue.length === 0){
+				console.log('no makes to show');
+				return;
+			}
+			player.src = playQueue[0].url;
+			player.onload = function(){
+				window.addEventListener('message', function(msg){
+					if(msg.data.type === 'loadedmetadata'){
+						msg.source.postMessage({type: 'play'}, '*');
+					}
+				})
+			}
+		});
+	</script>
+</body>
 </html>

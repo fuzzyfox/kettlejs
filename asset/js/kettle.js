@@ -1,13 +1,13 @@
 /*
- * kettle.js version 0.1
+ * kettle.js version 0.2
  *
- * Copyright 2013, {contributors}
+ * Copyright 2013, William Duyck, Jessica Draper, Simon Phillips, Matt Mullarky-Toner, Mohamad Hussien, Elena Klaudis
  * Licensed under the Mozilla Pulbic License Version 2.0
  */
 (function(window, document, undefined){
 
 	// Kettle.js requires popcorn.js and the make api client
-	if(!window.Popcorn || !window.Popcorn.isSupported || !window.Make){
+	if(!window.Make){
 		window.Kettle = {
 			isSupported: false
 		};
@@ -36,12 +36,12 @@
 
 	// Declare constructor
 	// Returns an instance object
-	Kettle = function(entity, options){
+	var Kettle = function(entity, options){
 		return new Kettle.prototype.init(entity, options || null);
 	};
 
 	// Kettle API version
-	Kettle.version = "0.1";
+	Kettle.version = "0.2";
 
 	// Boolean flag allowing client to determine if Kettle can be supported
 	Kettle.isSupported = true;
@@ -97,12 +97,14 @@
 		return obj;
 	};
 
+	Kettle.prototype.playQueue = [];
+
 	Kettle.extend(Kettle.prototype, {
+		latestMake: null,
 		search: function(searchTerm, fn){
 			var self = this;
 			makeAPI.or()
 				.tags(searchTerm.split(/\s+/))
-				//.description(searchTerm)
 				.sortByField('updatedAt', 'asc')
 				.then(function(err, makes){
 					if(err){
@@ -111,22 +113,49 @@
 					}
 
 					Kettle.forEach(makes, function(make){
-						if(make.updatedAt > self.playQueue.prototype.mostRecentTime &&
+						if(make.updatedAt > self.latestMake &&
 							make.contentType == 'application/x-popcorn'){
-							self.playQueue.prototype.mostRecentTime = make.updatedAt;
+							self.latestMake = make.updatedAt;
+							make.url += '_';
 							self.playQueue.push(make);
 						}
 					});
-
-					self.playQueue.searchTerm = searchTerm;
 
 					if(typeof fn === 'function'){
 						fn(self.playQueue);
 						return;
 					}
 				});
+		},
+		getQueryVariable: function(variable, queryString){
+			queryString = queryString || window.location.search;
+
+			var query = queryString.substr(1),
+				vars  = query.split('&'),
+				pairs;
+
+			for(var i = 0, j = vars.length; i < j; i++){
+				pairs = vars[i].split('=');
+
+				if(decodeURIComponent(pairs[0]) === variable){
+					return decodeURIComponent(pairs[1]);
+				}
+			}
+
+			return null;
 		}
 	});
+
+	// Kettle.extend(Kettle.prototype.playQueue.prototype, {
+	// 	cycle: function(){
+	// 		var rtn = this.shift();
+	// 		this.push(rtn);
+	// 		return rtn;
+	// 	},
+	// 	shuffle: function(){
+	// 		for(var j, x, i = this.length; i; j = parseInt(Math.random() * i, 10), x = this[--i], this[i] = this[j], this[j] = x);
+	// 	}
+	// });
 
 	window.Kettle = Kettle;
 })(this, this.document);
