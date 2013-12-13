@@ -97,6 +97,26 @@
 		return obj;
 	};
 
+	Kettle.extend(Kettle, {
+		getQueryVariable: function(variable, queryString){
+			queryString = queryString || window.location.search;
+
+			var query = queryString.substr(1),
+				vars  = query.split('&'),
+				pairs;
+
+			for(var i = 0, j = vars.length; i < j; i++){
+				pairs = vars[i].split('=');
+
+				if(decodeURIComponent(pairs[0]) === variable){
+					return decodeURIComponent(pairs[1]);
+				}
+			}
+
+			return null;
+		}
+	})
+
 	Kettle.prototype.playQueue = [];
 
 	Kettle.extend(Kettle.prototype, {
@@ -127,35 +147,18 @@
 					}
 				});
 		},
-		getQueryVariable: function(variable, queryString){
-			queryString = queryString || window.location.search;
-
-			var query = queryString.substr(1),
-				vars  = query.split('&'),
-				pairs;
-
-			for(var i = 0, j = vars.length; i < j; i++){
-				pairs = vars[i].split('=');
-
-				if(decodeURIComponent(pairs[0]) === variable){
-					return decodeURIComponent(pairs[1]);
-				}
-			}
-
-			return null;
-		}
 	});
 
-	// Kettle.extend(Kettle.prototype.playQueue.prototype, {
-	// 	cycle: function(){
-	// 		var rtn = this.shift();
-	// 		this.push(rtn);
-	// 		return rtn;
-	// 	},
-	// 	shuffle: function(){
-	// 		for(var j, x, i = this.length; i; j = parseInt(Math.random() * i, 10), x = this[--i], this[i] = this[j], this[j] = x);
-	// 	}
-	// });
+	Kettle.extend(Kettle.prototype.playQueue, {
+		cycle: function(){
+			var rtn = this.shift();
+			this.push(rtn);
+			return rtn;
+		},
+		shuffle: function(){
+			for(var j, x, i = this.length; i; j = parseInt(Math.random() * i, 10), x = this[--i], this[i] = this[j], this[j] = x);
+		}
+	});
 
 	window.Kettle = Kettle;
 })(this, this.document);

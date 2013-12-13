@@ -142,7 +142,7 @@
 		var kettle = new Kettle(),
 			player = document.querySelector('#player');
 
-		kettle.search('popcats', function(playQueue){
+		kettle.search(Kettle.getQueryVariable('q') || 'webmaker:featured', function(playQueue){
 			if(playQueue.length === 0){
 				console.log('no makes to show');
 				return;
@@ -152,6 +152,11 @@
 				window.addEventListener('message', function(msg){
 					if(msg.data.type === 'loadedmetadata'){
 						msg.source.postMessage({type: 'play'}, '*');
+						playQueue.cycle();
+					}
+
+					if(msg.data.type === 'trackend' && msg.data.plugin === 'sequencer'){
+						player.src = playQueue[0].url;
 					}
 				})
 			}
