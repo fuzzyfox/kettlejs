@@ -155,7 +155,7 @@
 						playQueue.cycle();
 					}
 
-					if(msg.data.type === 'trackend' && msg.data.plugin === 'sequencer'){
+					if(msg.data.type === 'ended'){
 						player.src = playQueue[0].url;
 					}
 				})
